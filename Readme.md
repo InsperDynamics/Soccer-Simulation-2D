@@ -1,11 +1,16 @@
 # Guia:
 ## Para Abrir Server
 
+```bash
 
+cd SEU_DIRETORIO/starter-stack/rcssserver-15.2.2/
+
+```
 
 ## Para Criar Times
 
-
+cd SEU_DIRETORIO/starter-stack/Agent/src
+./start.sh -t NOME_DO_SEU_TIME
 
 ## Para Abrir Monitor
 
