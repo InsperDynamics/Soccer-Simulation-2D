@@ -9,7 +9,7 @@ import sock
 import sp_exceptions
 import handler
 from world_model import WorldModel
-
+from estrategia_basica import *
 
 class Agent:
     def __init__(self):
@@ -106,6 +106,7 @@ class Agent:
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
         #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI
+        estrategiaBasica(self, WorldModel)
 
 
 
@@ -137,10 +138,8 @@ if __name__ == "__main__":
             time.sleep(0.05)
     except KeyboardInterrupt:
         print("Terminando threads de agentes...")
-        count = 0
         for at in agentthreads:
             at.terminate()
-            count += 1
         print("quitando...")
         sys.exit()
 
