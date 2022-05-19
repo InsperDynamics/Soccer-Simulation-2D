@@ -4,8 +4,8 @@ import message_parser
 import sp_exceptions
 import game_object
 from world_model import WorldModel
-PRINT_SERVER_MESSAGES = True
-PRINT_SENT_COMMANDS = True
+PRINT_SERVER_MESSAGES = False
+PRINT_SENT_COMMANDS = False
 
 class MessageHandler:
     #handler para mensagens recebidas
@@ -17,15 +17,16 @@ class MessageHandler:
 
     def handle_message(self, msg):
         parsed = message_parser.parse(msg)
-        if PRINT_SERVER_MESSAGES:
-            print(parsed[0] + ":", parsed[1:], "\n")
-        msg_func = "_handle_%s" % parsed[0]
-        if hasattr(self, msg_func):
-            getattr(self, msg_func).__call__(parsed)
-        else:
-            m = "Can't handle message type '%s', function '%s' not found."
-            raise sp_exceptions.MessageTypeError(m % (parsed[0], msg_func))
-        return parsed[0] #tipo da mensagem recebida
+        if parsed:
+            if PRINT_SERVER_MESSAGES:
+                print(parsed[0] + ":", parsed[1:], "\n")
+            msg_func = "_handle_%s" % parsed[0]
+            if hasattr(self, msg_func):
+                getattr(self, msg_func).__call__(parsed)
+            else:
+                m = "Can't handle message type '%s', function '%s' not found."
+                raise sp_exceptions.MessageTypeError(m % (parsed[0], msg_func))
+            return parsed[0] #tipo da mensagem recebida
 
     def _handle_see(self, msg):
         sim_time = msg[1]

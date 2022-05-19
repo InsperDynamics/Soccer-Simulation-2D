@@ -9,10 +9,10 @@ class Socket:
     def send(self, msg, append_null_terminator=True):
         if append_null_terminator:
             msg = msg + "\0"
-        self.sock.sendto(msg, self.address)
+        self.sock.sendto(msg.encode(), self.address)
     
     def recv(self, conform_address=True):
         data, address = self.sock.recvfrom(self.bufsize)
         if conform_address:
             self.address = address
-        return data
+        return data.decode()
