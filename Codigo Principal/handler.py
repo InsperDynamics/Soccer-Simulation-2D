@@ -4,8 +4,8 @@ import message_parser
 import sp_exceptions
 import game_object
 from world_model import WorldModel
-PRINT_SERVER_MESSAGES = True
-PRINT_SENT_COMMANDS = True
+PRINT_SERVER_MESSAGES = False
+PRINT_SENT_COMMANDS = False
 
 class MessageHandler:
     #handler para mensagens recebidas
