@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -W -Wall -O3 -DNDEBUG  -shared -Wl,-soname,librcssconfparser.so.3 -o librcssconfparser.so.3.0.0 CMakeFiles/RCSSConfParser.dir/parser.cpp.o CMakeFiles/RCSSConfParser.dir/builder.cpp.o CMakeFiles/RCSSConfParser.dir/statushandler.cpp.o CMakeFiles/RCSSConfParser.dir/streamstatushandler.cpp.o 

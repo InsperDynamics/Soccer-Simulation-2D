@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -W -Wall -O3 -DNDEBUG  -shared -Wl,-soname,librcssgz.so.1 -o librcssgz.so.1.0.0 CMakeFiles/RCSSGZ.dir/gzfstream.cpp.o CMakeFiles/RCSSGZ.dir/gzstream.cpp.o  /usr/lib/x86_64-linux-gnu/libz.so 

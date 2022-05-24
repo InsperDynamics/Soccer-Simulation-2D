@@ -1,9 +1,5 @@
-import os 
-
-def player1():
-    os.chdir('Agent1/src')
-    os.system('./start.sh -t teamnacme') #Aqui você pode trocar o nome do time
-
-player1()
-
-
+import os
+path = 'starter-stack/Agent/src'
+nome = 'insiraNome'
+os.chdir(path)
+os.system(f'./start.sh -t {nome}')

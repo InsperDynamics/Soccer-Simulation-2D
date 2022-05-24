@@ -1,7 +1,5 @@
 import os 
+path = 'monitor/rcssmonitor-17.0.0/src'
 
-def server():
-    os.chdir('rcssmonitor/src')
-    os.system('./rcssmonitor')
-
-server()
+os.chdir(path)
+os.system('./rcssmonitor')
