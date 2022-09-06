@@ -334,12 +334,15 @@ class ActionHandler:
         msg = "(dash %.10f)" % power
         cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
         cmd = ActionHandler.Command(cmd_type, msg)
+        # print(msg)
         self.q.put(cmd)
 
     def kick(self, power, relative_direction):
-        msg = "(kick %.10f %.10f)" % (power, relative_direction)
+        msg = f"(kick {power} {relative_direction})"
+        #msg = "(kick %.10f %.10f)" % (power, relative_direction)
         cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
         cmd = ActionHandler.Command(cmd_type, msg)
+        print(msg)
         self.q.put(cmd)
 
     def catch(self, relative_direction):
