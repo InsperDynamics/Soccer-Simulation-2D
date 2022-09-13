@@ -221,32 +221,64 @@ class WorldModel:
         return self.server_parameters.ball_speed_max
 
 
-    def kick_to(self, point, extra_power=0.0):
-        # pega distancia e angulo do ponto alvo pro chute
-        point_dist = self.euclidean_distance(self.abs_coords, point)
-        abs_point_dir = self.angle_between_points(self.abs_coords, point)
-        if self.abs_body_dir is not None:
-            rel_point_dir = self.abs_body_dir - abs_point_dir
-        # interpola assumindo que forca maxima (100) faz a bola andar 45 unidades 
-        # (PRECISA MEXER SE O PARAMETRO DA COMPETICAO MUDAR!!)
-        max_kick_dist = 45.0
-        dist_ratio = point_dist / max_kick_dist
-        # calcula forca para fazer a bola parar no ponto
-        required_power = dist_ratio * self.server_parameters.maxpower
-        effective_power = self.get_effective_kick_power(self.ball, required_power)
-        required_power += 1 - (effective_power / required_power)
-        # forca extra se quisermos fazer a bola passar do ponto
-        power_mod = 1.0 + extra_power
-        power = required_power * power_mod
-        # chuta
-        self.ah.kick(rel_point_dir, power)
+    # def kick_to(self, point, extra_power=0.0):
+    #     # pega distancia e angulo do ponto alvo pro chute
+    #     point_dist = self.euclidean_distance(self.abs_coords, point)
+    #     abs_point_dir = self.angle_between_points(self.abs_coords, point)
+    #     if self.abs_body_dir is not None:
+    #         rel_point_dir = self.abs_body_dir - abs_point_dir
+    #         # interpola assumindo que forca maxima (100) faz a bola andar 45 unidades 
+    #         # (PRECISA MEXER SE O PARAMETRO DA COMPETICAO MUDAR!!)
+    #         max_kick_dist = 55.0
+    #         dist_ratio = point_dist / max_kick_dist
+    #         # calcula forca para fazer a bola parar no ponto
+    #         required_power = dist_ratio * self.server_parameters.maxpower
+    #         effective_power = self.get_effective_kick_power(self.ball, required_power)
+    #         if required_power:
+    #             required_power += 1 - (effective_power / required_power)
+    #             # forca extra se quisermos fazer a bola passar do ponto
+    #             power_mod = 1.0 + extra_power
+    #             power = required_power * power_mod
+    #             # chuta
+    #             self.ah.kick(10, rel_point_dir)
 
+    def kick_to(self, point, extra_power=0.0):
+        if self.abs_coords is not None:
+            max_kick_dist = 55.0 # maxíma distância percorrida pela bola na força maxima
+            point_dist = self.euclidean_distance(self.abs_coords, point)
+            dist_ratio = point_dist / max_kick_dist
+            # calcula força para fazer a bola parar no ponto
+            required_power = dist_ratio * self.server_parameters.maxpower
+            effective_power = self.get_effective_kick_power(self.ball, required_power)
+            if required_power:
+                required_power += 1 - (effective_power / required_power)
+                power = required_power * (1 + extra_power) # forca extra se quisermos fazer a bola passar do ponto
+                ball_pos = self.get_object_absolute_coords(self.ball)
+                angle_to_point = self.angle_between_points(self.abs_coords, point)
+                angle = - angle_to_point
+                print(self.abs_coords)
+                # print(round(self.abs_body_dir, 2) , round(angle_to_point, 2))
+                self.ah.kick(100, angle) # chuta
+
+
+    # def chute_fraco(self, point):
+    #     point_dist = self.euclidean_distance(self.abs_coords, point)
+    #     min_dist = point_dist/5 if point_dist/5 > 1 else 1
+    #     player_x = self.abs_coords[0]
+    #     player_y = self.abs_coords[1]
+    #     x = point[0]
+    #     y = point[1]
+    #     new_x = (min_dist*(x-player_x))/(math.sqrt(x**2 + y**2))
+    #     new_y = (min_dist*(y-player_y))/(math.sqrt(x**2 + y**2))
+    #     new_point = (new_x, new_y)
+    #     print(point, new_point)
+    #     self.kick_to(new_point)
 
     def get_effective_kick_power(self, ball, power):
         # calcula forca efetiva de chute baseado na distancia e angulo que a bola esta
         if ball.distance is None:
             return
-        kick_power = max(min(power, self.server_parameters.maxpower), self.server_parameters.minpower)
+        kick_power = max([min([power, self.server_parameters.maxpower]), self.server_parameters.minpower])
         kick_power *= self.server_parameters.kick_power_rate
         a = 0.25 * (ball.direction / 180)
         b = 0.25 * (ball.distance / self.server_parameters.kickable_margin)
