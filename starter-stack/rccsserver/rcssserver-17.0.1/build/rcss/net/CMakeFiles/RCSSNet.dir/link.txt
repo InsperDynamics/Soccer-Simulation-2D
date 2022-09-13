@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -W -Wall -O3 -DNDEBUG  -shared -Wl,-soname,librcssnet.so.1 -o librcssnet.so.1.0.1 CMakeFiles/RCSSNet.dir/addr.cpp.o CMakeFiles/RCSSNet.dir/socket.cpp.o CMakeFiles/RCSSNet.dir/socketstreambuf.cpp.o CMakeFiles/RCSSNet.dir/tcpsocket.cpp.o CMakeFiles/RCSSNet.dir/udpsocket.cpp.o 
