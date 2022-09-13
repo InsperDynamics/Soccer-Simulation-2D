@@ -1,11 +1,9 @@
 def estrategiaBasica(self, WorldModel):
     # take places on the field by uniform number
     if not self.in_kick_off_formation:
-
+        
         # used to flip x coords for other side
-        side_mod = 1
-        if self.wm.side == WorldModel.SIDE_R:
-            side_mod = -1
+        side_mod = -1 if self.wm.side == WorldModel.SIDE_R else 1
 
         if self.wm.uniform_number == 1:
             self.wm.teleport_to_point((-5 * side_mod, 30))
