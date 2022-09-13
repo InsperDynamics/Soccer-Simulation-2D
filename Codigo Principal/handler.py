@@ -348,14 +348,44 @@ class ActionHandler:
         cmd = ActionHandler.Command(cmd_type, msg)
         self.q.put(cmd)
 
+    def tackle(self, relative_direction):
+        msg = "(tackle %.10f)" % relative_direction
+        cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
     def say(self, message):
         msg = "(say %s)" % message
         cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
         cmd = ActionHandler.Command(cmd_type, msg)
         self.q.put(cmd)
 
+    def attentionto(self, teamname='our', unum=1, off=False):
+        if not off:
+            msg = "(attentionto %s %d)" % (teamname, unum)
+        else:
+            msg = "(attentionto off)"
+        cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
+    def pointto(self, dist=0, direction=0, off=False):
+        if not off:
+            msg = "(pointto %.10f %.10f)" % (dist, direction)
+        else:
+            msg = "(pointto off)"
+        cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
     def turn_neck(self, relative_direction):
         msg = "(turn_neck %.10f)" % relative_direction
+        cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
+    def change_view(self, width, quality):
+        msg = "(change_view %s %s)" % (width, quality)
         cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
         cmd = ActionHandler.Command(cmd_type, msg)
         self.q.put(cmd)
