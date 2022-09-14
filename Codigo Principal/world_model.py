@@ -147,7 +147,8 @@ class WorldModel:
         return latest
 
 
-    def euclidean_distance(self, point1, point2):
+    @staticmethod
+    def euclidean_distance(point1, point2):
         x1 = point1[0]
         y1 = point1[1]
         x2 = point2[0]
@@ -155,7 +156,8 @@ class WorldModel:
         return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
 
-    def angle_between_points(self, point1, point2):
+    @staticmethod
+    def angle_between_points(point1, point2):
         x1 = point1[0]
         y1 = point1[1]
         x2 = point2[0]
