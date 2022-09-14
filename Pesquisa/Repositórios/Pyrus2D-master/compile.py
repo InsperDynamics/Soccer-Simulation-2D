@@ -28,7 +28,7 @@ class Src:
         return False
 
     def is_compiled(self):
-        if self.ext == "so" or self.ext == "c":
+        if self.ext in ("so", "c"):
             return True
         return False
 

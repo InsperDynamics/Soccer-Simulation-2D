@@ -180,7 +180,7 @@ class ConvexHull:
                 last_value = 0.0
 
                 for k in range(point_size):
-                    if k == i or k == j:
+                    if k in (i, j):
                         continue
 
                     r = self._input_points[k]

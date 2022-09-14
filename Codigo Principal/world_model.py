@@ -206,9 +206,9 @@ class WorldModel:
         ckr = WorldModel.PlayModes.CORNER_KICK_R
         pm = self.play_mode
         if self.side == WorldModel.SIDE_L:
-            return (pm == kir or pm == fkr or pm == ckr)
+            return pm in (kir, fkr, ckr)
         else:
-            return (pm == kil or pm == fkl or pm == ckl)
+            return pm in (kil, fkl, ckl)
 
 
     def is_ball_kickable(self):
