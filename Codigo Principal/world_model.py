@@ -147,7 +147,8 @@ class WorldModel:
         return latest
 
 
-    def euclidean_distance(self, point1, point2):
+    @staticmethod
+    def euclidean_distance(point1, point2):
         x1 = point1[0]
         y1 = point1[1]
         x2 = point2[0]
@@ -155,7 +156,8 @@ class WorldModel:
         return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
 
-    def angle_between_points(self, point1, point2):
+    @staticmethod
+    def angle_between_points(point1, point2):
         x1 = point1[0]
         y1 = point1[1]
         x2 = point2[0]
@@ -206,9 +208,9 @@ class WorldModel:
         ckr = WorldModel.PlayModes.CORNER_KICK_R
         pm = self.play_mode
         if self.side == WorldModel.SIDE_L:
-            return (pm == kir or pm == fkr or pm == ckr)
+            return pm in (kir, fkr, ckr)
         else:
-            return (pm == kil or pm == fkl or pm == ckl)
+            return pm in (kil, fkl, ckl)
 
 
     def is_ball_kickable(self):
