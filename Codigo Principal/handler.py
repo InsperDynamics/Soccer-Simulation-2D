@@ -151,13 +151,7 @@ class MessageHandler:
 
             # ignore these messages, but pass them on to the agent. these don't
             # change state but could still be useful.
-            elif (mode == WorldModel.RefereeMessages.FOUL_L or
-                  mode == WorldModel.RefereeMessages.FOUL_R or
-                  mode == WorldModel.RefereeMessages.GOALIE_CATCH_BALL_L or
-                  mode == WorldModel.RefereeMessages.GOALIE_CATCH_BALL_R or
-                  mode == WorldModel.RefereeMessages.TIME_UP_WITHOUT_A_TEAM or
-                  mode == WorldModel.RefereeMessages.HALF_TIME or
-                  mode == WorldModel.RefereeMessages.TIME_EXTENDED):
+            elif mode in (WorldModel.RefereeMessages.FOUL_L, WorldModel.RefereeMessages.FOUL_R, WorldModel.RefereeMessages.GOALIE_CATCH_BALL_L, WorldModel.RefereeMessages.GOALIE_CATCH_BALL_R, WorldModel.RefereeMessages.TIME_UP_WITHOUT_A_TEAM, WorldModel.RefereeMessages.HALF_TIME, WorldModel.RefereeMessages.TIME_EXTENDED):
 
                 # messages are named 3-tuples of (time, sender, message)
                 ref_msg = self.Message(time_recvd, sender, message)
