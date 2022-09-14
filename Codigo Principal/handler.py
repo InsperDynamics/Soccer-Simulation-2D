@@ -151,13 +151,7 @@ class MessageHandler:
 
             # ignore these messages, but pass them on to the agent. these don't
             # change state but could still be useful.
-            elif (mode == WorldModel.RefereeMessages.FOUL_L or
-                  mode == WorldModel.RefereeMessages.FOUL_R or
-                  mode == WorldModel.RefereeMessages.GOALIE_CATCH_BALL_L or
-                  mode == WorldModel.RefereeMessages.GOALIE_CATCH_BALL_R or
-                  mode == WorldModel.RefereeMessages.TIME_UP_WITHOUT_A_TEAM or
-                  mode == WorldModel.RefereeMessages.HALF_TIME or
-                  mode == WorldModel.RefereeMessages.TIME_EXTENDED):
+            elif mode in (WorldModel.RefereeMessages.FOUL_L, WorldModel.RefereeMessages.FOUL_R, WorldModel.RefereeMessages.GOALIE_CATCH_BALL_L, WorldModel.RefereeMessages.GOALIE_CATCH_BALL_R, WorldModel.RefereeMessages.TIME_UP_WITHOUT_A_TEAM, WorldModel.RefereeMessages.HALF_TIME, WorldModel.RefereeMessages.TIME_EXTENDED):
 
                 # messages are named 3-tuples of (time, sender, message)
                 ref_msg = self.Message(time_recvd, sender, message)
@@ -334,16 +328,25 @@ class ActionHandler:
         msg = "(dash %.10f)" % power
         cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
         cmd = ActionHandler.Command(cmd_type, msg)
+        # print(msg)
         self.q.put(cmd)
 
     def kick(self, power, relative_direction):
-        msg = "(kick %.10f %.10f)" % (power, relative_direction)
+        msg = f"(kick {power} {relative_direction})"
+        #msg = "(kick %.10f %.10f)" % (power, relative_direction)
         cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
         cmd = ActionHandler.Command(cmd_type, msg)
+        print(msg)
         self.q.put(cmd)
 
     def catch(self, relative_direction):
         msg = "(catch %.10f)" % relative_direction
+        cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
+    def tackle(self, relative_direction):
+        msg = "(tackle %.10f)" % relative_direction
         cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
         cmd = ActionHandler.Command(cmd_type, msg)
         self.q.put(cmd)
@@ -354,8 +357,32 @@ class ActionHandler:
         cmd = ActionHandler.Command(cmd_type, msg)
         self.q.put(cmd)
 
+    def attentionto(self, teamname='our', unum=1, off=False):
+        if not off:
+            msg = "(attentionto %s %d)" % (teamname, unum)
+        else:
+            msg = "(attentionto off)"
+        cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
+    def pointto(self, dist=0, direction=0, off=False):
+        if not off:
+            msg = "(pointto %.10f %.10f)" % (dist, direction)
+        else:
+            msg = "(pointto off)"
+        cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
     def turn_neck(self, relative_direction):
         msg = "(turn_neck %.10f)" % relative_direction
+        cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
+        cmd = ActionHandler.Command(cmd_type, msg)
+        self.q.put(cmd)
+
+    def change_view(self, width, quality):
+        msg = "(change_view %s %s)" % (width, quality)
         cmd_type = ActionHandler.CommandType.TYPE_SECONDARY
         cmd = ActionHandler.Command(cmd_type, msg)
         self.q.put(cmd)

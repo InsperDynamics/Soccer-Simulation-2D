@@ -1,7 +1,5 @@
 import os 
+path = 'rccsserver/rcssserver-17.0.1/src'
 
-def server():
-    os.chdir('rcssserver-15.2.2/src')
-    os.system('rcssserver')
-
-server()
+os.chdir(path)
+os.system('./rcssserver')

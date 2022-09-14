@@ -34,20 +34,9 @@ class GameMode:
 
     def is_teams_set_play(self, team_side: SideID):
         mode_name = self.mode_name()
-        if mode_name == "kick_off" or \
-                mode_name == "kick_in" or \
-                mode_name == "corner_kick" or \
-                mode_name == "goal_kick" or \
-                mode_name == "free_kick" or \
-                mode_name == "goalie_catch" or \
-                mode_name == "indirect_free_kick":
+        if mode_name in ("kick_off", "kick_in", "corner_kick", "goal_kick", "free_kick", "goalie_catch", "indirect_free_kick"):
             return self.side() == team_side
-        elif mode_name == "off_side" or \
-                mode_name == "foul_charge" or \
-                mode_name == "foul_push" or \
-                mode_name == "free_kick_fault" or \
-                mode_name == "back_pass" or \
-                mode_name == "catch_fault":
+        elif mode_name in ("off_side", "foul_charge", "foul_push", "free_kick_fault", "back_pass", "catch_fault"):
             return self.side() != team_side
         return False
 
