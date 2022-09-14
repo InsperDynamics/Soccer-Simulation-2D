@@ -257,11 +257,13 @@ class MessageHandler:
         self.wm.uniform_number = uniform_number
         self.wm.play_mode = play_mode
 
-    def _handle_error(self, msg):
+    @staticmethod
+    def _handle_error(msg):
         m = "Server retornou um erro: '%s'" % msg[1]
         raise sp_exceptions.SoccerServerError(m)
 
-    def _handle_warning(self, msg):
+    @staticmethod
+    def _handle_warning(msg):
         m = "Server retornou um warning: '%s'" % msg[1]
         print(sp_exceptions.SoccerServerWarning(m))
 
