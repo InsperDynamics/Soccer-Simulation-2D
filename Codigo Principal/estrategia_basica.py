@@ -6,7 +6,7 @@ def estrategiaBasica(self, WorldModel):
         side_mod = -1 if self.wm.side == WorldModel.SIDE_R else 1
 
         if self.wm.uniform_number == 1:
-            self.wm.teleport_to_point((-5 * side_mod, 30))
+            self.wm.teleport_to_point((-50 * side_mod, 0))
         elif self.wm.uniform_number == 2:
             self.wm.teleport_to_point((-40 * side_mod, 15))
         elif self.wm.uniform_number == 3:

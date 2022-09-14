@@ -28,7 +28,7 @@ class Agent:
         self.in_kick_off_formation = False
 
 
-    def connect(self, host, port, teamname, version=11):
+    def connect(self, host, port, teamname, goalie, version=11):
         if self.__connected:
             msg = "Ja estou conectado!"
             raise sp_exceptions.AgentConnectionStateError(msg)
@@ -44,7 +44,10 @@ class Agent:
         self.__msg_thread.start()
 
         init_address = self.__sock.address
-        init_msg = "(init %s (version %d))"
+        if goalie:
+            init_msg = "(init %s (version %d)(goalie))"
+        else:
+            init_msg = "(init %s (version %d))"
         self.__sock.send(init_msg % (teamname, version))
         while self.__sock.address == init_address:
             time.sleep(0.0001)
@@ -120,17 +123,21 @@ if __name__ == "__main__":
     team_name = sys.argv[1]
     num_players = int(sys.argv[2])
 
-    def spawn_agent(team_name):
+    def spawn_agent(team_name, goalie):
         a = Agent()
-        a.connect("localhost", 6000, team_name)
+        a.connect("localhost", 6000, team_name, goalie=goalie)
         a.play()
         while 1:
             time.sleep(1)
 
     agentthreads = []
     for agent in range(num_players):
-        print("Spawnando agente {}...".format(agent))
-        at = mp.Process(target=spawn_agent, args=(sys.argv[1],))
+        if agent == 0:
+            print("Spawnando goleiro...")
+            at = mp.Process(target=spawn_agent, args=(sys.argv[1],True,))
+        else:
+            print("Spawnando agente {}...".format(agent))
+            at = mp.Process(target=spawn_agent, args=(sys.argv[1],False,))
         at.daemon = True
         at.start()
         agentthreads.append(at)
