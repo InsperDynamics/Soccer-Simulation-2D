@@ -10,12 +10,16 @@ import sp_exceptions
 import handler
 from world_model import WorldModel
 from estrategia_basica import *
+from kalman_estimator import *
+from estrategia_ML import *
 
 class Agent:
     def __init__(self):
         self.__connected = False
         self.__sock = None
         self.wm = None
+        self.game_state = None
+        self.game_state_estimator = None
         self.msg_handler = None
         self.__parsing = False
         self.__msg_thread = None
@@ -30,17 +34,16 @@ class Agent:
         if self.__connected:
             msg = "Ja estou conectado!"
             raise sp_exceptions.AgentConnectionStateError(msg)
-
         self.__sock = sock.Socket(host, port)
         self.wm = WorldModel(handler.ActionHandler(self.__sock))
         self.wm.teamname = teamname
         self.msg_handler = handler.MessageHandler(self.wm)
-
+        self.game_state = game_state()
+        self.game_state_estimator = game_state_estimator()
         self.__parsing = True
         self.__msg_thread = threading.Thread(target=self.__message_loop, name="message_loop")
         self.__msg_thread.daemon = True 
         self.__msg_thread.start()
-
         init_address = self.__sock.address
         if goalie:
             init_msg = "(init %s (version %d)(goalie))"
@@ -49,11 +52,9 @@ class Agent:
         self.__sock.send(init_msg % (teamname, version))
         while self.__sock.address == init_address:
             time.sleep(0.0001)
-
         self.__thinking = False
         self.__think_thread = threading.Thread(target=self.__think_loop, name="think_loop")
         self.__think_thread.daemon = True
-
         self.__connected = True
 
 
@@ -106,11 +107,19 @@ class Agent:
 
 
     def think(self):
+        #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI!
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
-        #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI
         formacaoKickoff(self, WorldModel)
-        ataqueBasico.estrategiaAtaque(self, WorldModel)
+        #ataqueBasico(self, WorldModel)
+        acaoJogadores = queryModel(game_state)
+        if self.wm.side == WorldModel.SIDE_L:
+            acao = acaoJogadores[self.wm.uniform_number]
+        else:
+            acao = acaoJogadores[11 + self.wm.uniform_number]
+        #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
+        self.game_state_estimator.update(self.game_state, acaoJogadores)
+        self.game_state = self.game_state.update()
 
 
 
