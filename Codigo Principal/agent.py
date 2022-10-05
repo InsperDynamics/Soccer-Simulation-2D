@@ -5,13 +5,11 @@ import sys
 import multiprocessing as mp
 import threading
 import time
-from estrategia_ataque import estrategiaAtaque
 import sock
 import sp_exceptions
 import handler
 from world_model import WorldModel
 from estrategia_basica import *
-from estrategia_ataque import *
 
 class Agent:
     def __init__(self):
@@ -111,8 +109,8 @@ class Agent:
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
         #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI
-        estrategiaBasica(self, WorldModel)
-        estrategiaAtaque(self, WorldModel)
+        formacaoKickoff(self, WorldModel)
+        ataqueBasico.estrategiaAtaque(self, WorldModel)
 
 
 
