@@ -114,9 +114,9 @@ class Agent:
         #ataqueBasico(self, WorldModel)
         acaoJogadores = queryModel(game_state)
         if self.wm.side == WorldModel.SIDE_L:
-            acao = acaoJogadores[self.wm.uniform_number]
+            acao = acaoJogadores[self.wm.uniform_number + 1]
         else:
-            acao = acaoJogadores[11 + self.wm.uniform_number]
+            acao = acaoJogadores[11 + self.wm.uniform_number + 1]
         #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
         self.game_state_estimator.update(self.game_state, acaoJogadores)
         self.game_state = self.game_state.update()
