@@ -116,7 +116,7 @@ class MessageHandler:
                 new_players.append(game_object.Player(None, None, None, None,
                     None, None, None, None, None, None))
 
-        self.wm.process_new_info(new_ball, new_flags, new_goals, new_players,
+        self.wm.process_new_info(sim_time, new_ball, new_flags, new_goals, new_players,
                 new_lines)
 
     def _handle_hear(self, msg):

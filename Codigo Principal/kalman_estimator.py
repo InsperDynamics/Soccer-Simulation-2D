@@ -16,9 +16,9 @@ class game_state:
         self.ballVX = 0
         self.ballVY = 0
 
-    def update(self):
+    def new_observation(self, ball_observation, flags_observation, goals_observation, lines_observation, players_observation):
         #estimar variaveis com o self.game_state_estimator e retornar o game_state atualizado
-        pass
+        return self
 
 
 

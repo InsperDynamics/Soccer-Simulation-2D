@@ -42,6 +42,7 @@ class WorldModel:
 
     def __init__(self, action_handler):
         self.ah = action_handler
+        self.sim_time = 0
         self.ball = None
         self.flags = []
         self.goals = []
@@ -170,7 +171,8 @@ class WorldModel:
         return a
 
 
-    def process_new_info(self, ball, flags, goals, players, lines):
+    def process_new_info(self, sim_time, ball, flags, goals, players, lines):
+        self.sim_time = sim_time
         self.ball = ball
         self.flags = flags
         self.goals = goals

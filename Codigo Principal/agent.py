@@ -118,8 +118,12 @@ class Agent:
         else:
             acao = acaoJogadores[11 + self.wm.uniform_number + 1]
         #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
+        self.game_state.game_tick = self.wm.sim_time
+        self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
+        self.game_state.score_left = self.wm.score_l
+        self.game_state.score_right = self.wm.score_r
+        self.game_state = self.game_state.new_observation(self.wm.ball, self.wm.flags, self.wm.goals, self.wm.lines, self.wm.players)
         self.game_state_estimator.update(self.game_state, acaoJogadores)
-        self.game_state = self.game_state.update()
 
 
 
