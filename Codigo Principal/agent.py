@@ -115,8 +115,8 @@ class Agent:
         characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
         for playerid in idsofsorted[0:3]:
             msg += characters[playerid]
-            msg += characters[int(round(self.game_state.playerX[playerid]/2))]
-            msg += characters[int(round(self.game_state.playerY[playerid]))]
+            msg += characters[int(round(self.game_state.playerX[playerid]/2) + 55)]
+            msg += characters[int(round(self.game_state.playerY[playerid]) + 35)]
         msg += characters[int(round(selfSTA))]
         self.wm.ah.say(msg)
 
