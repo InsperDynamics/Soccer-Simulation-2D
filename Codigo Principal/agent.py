@@ -114,9 +114,9 @@ class Agent:
         #ataqueBasico(self, WorldModel)
         acaoJogadores = queryModel(game_state)
         if self.wm.side == WorldModel.SIDE_L:
-            acao = acaoJogadores[self.wm.uniform_number + 1]
+            acao = acaoJogadores[self.wm.uniform_number - 1]
         else:
-            acao = acaoJogadores[11 + self.wm.uniform_number + 1]
+            acao = acaoJogadores[11 + self.wm.uniform_number - 1]
         #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
         self.game_state.game_tick = self.wm.sim_time
         self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
