@@ -106,14 +106,19 @@ class Agent:
             else:
                 time.sleep(0.0001)
 
-    def transmit_say(self, selfX, selfY):
-        msg = ""
+    def transmit_say(self, selfX, selfY, selfSTA):
         disttoself = []
         for i in range(22):
             disttoself.append(math.sqrt((selfX - self.game_state.playerX[i])**2 + (selfY - self.game_state.playerY[i])**2))
         idsofsorted = sorted(range(len(disttoself)), key=lambda k: disttoself[k])
-        for player in idsofsorted[0:3]:
-            pass
+        msg = ""
+        characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
+        for playerid in idsofsorted[0:3]:
+            msg += characters[playerid]
+            msg += characters[int(round(self.game_state.playerX[playerid]/2))]
+            msg += characters[int(round(self.game_state.playerY[playerid]))]
+        msg += characters[int(round(selfSTA))]
+        self.wm.ah.say(msg)
 
     def transmit_pointto(self, selfX, selfY):
         disttoself = math.sqrt((selfX - self.ballX)**2 + (selfY - self.ballY)**2)
@@ -134,12 +139,14 @@ class Agent:
         if self.wm.side == WorldModel.SIDE_L:
             selfX = self.game_state.playerX[self.wm.uniform_number - 1]
             selfY = self.game_state.playerY[self.wm.uniform_number - 1]
+            selfSTA = self.game_state.playerStamina[self.wm.uniform_number - 1]
             acao = acaoJogadores[self.wm.uniform_number - 1]
         else:
             selfX = self.game_state.playerX[11 + self.wm.uniform_number - 1]
             selfY = self.game_state.playerY[11 + self.wm.uniform_number - 1]
+            selfSTA = self.game_state.playerStamina[11 + self.wm.uniform_number - 1]
             acao = acaoJogadores[11 + self.wm.uniform_number - 1]
-        self.transmit_say(selfX, selfY)
+        self.transmit_say(selfX, selfY, selfSTA)
         self.transmit_pointto(selfX, selfY)
         #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
         self.game_state.game_tick = self.wm.sim_time
