@@ -1,0 +1,61 @@
+AUDICAO --> a leitura de som vem instantaneamente, e o jogador que recebe tem acesso a quem enviou e 
+10 caracteres no formato "NXYNXYNXYS" em que "NXY" sao o numero da camisa, X e Y dos tres jogadores mais proximos
+a quem enviou e S a stamina de quem enviou (nao tem erro associado: ou ouviu, ou nao ouviu)
+
+VISAO --> todas as informacoes dos objetos que o jogador esta vendo no tick atual (incluindo velocidade se eh um objeto que se move) sao passados como argumento
+para new_observation(). A distancia d possui o seguinte ruido: para bola e jogadores, d' = Quantize(exp(Quantize(log(d), quantize_step)), 0.1);
+para flags e linhas, d' = Quantize(exp(Quantize(log(d), quantize_step_l)), 0.1)
+quantize_step e quantize_step_l sao parametros do server
+
+MOVIMENTO -->  A posicao (px[t+1], py[t+1]) de um objeto no tick atual = (px[t], py[t]) + (vx[t], vy[t]) + (ax[t], ay[t]),
+sendo (vx[t+1], vy[t+1]) = ((vx[t], vy[t]) + (ax[t], ay[t])) * decay_speed
+e (ax[t], ay[t]) = power * power_rate * (cos(theta), sen(theta)) , onde power vem do edp de dash (no caso de um jogador) ou ekp de kick (no caso da bola) (se eles nao sofrerem essas acoes eh (0,0))
+sera acrescentado ao (vx[t], vy[t]) um ruido (rx, ry) que pode variar de -rmax a +rmax. 
+rmax = rand * (vx[t], vy[t]) onde rand pode ser player_rand ou ball_rand
+decay_speed, player_rand e ball_rand sao parametros do server
+
+COLISAO --> As traves dos gols são circulares com um raio de 6 e estão localizados em +-(comprimento_do_campo/2 - 6, comprimento_do_campo/2 + 6)
+todo objeto que colidir com a trave (ou seja, se ficar a object.size + 6 da trave) rebate elasticamente
+ball_size e player_size sao parametros do server, e o campo mede 110x70
+
+DASH --> O edp (forca efetiva de dash) = effort * dash_power_rate * power , e isso eh adicionado ao vetor aceleracao no modelo de movimento
+effort vem do modelo de stamina, dash_power_rate eh um parametro do server 
+power eh a forca aplicada ao dash multiplicado por um fator dir_rate em funcao do angulo dir
+if (fabs(dir) > 90) {
+    dir_rate = back_dash_rate - (back_dash_rate - side_dash_rate)*(1 - (fabs(dir)-90)/90)
+}
+else {
+    dir_rate = side_dash_rate + (1 - side_dash_rate)*(1 - fabs(dir)/90)
+}
+back_dash_rate e side_dash_rate sao parametros do server
+
+STAMINA --> A stamina e o effort de um player seguem o seguinte codigo todo ciclo, onde todas as outras variaveis sao parametros do server:
+if stamina <= recover_dec_thr * stamina_max
+  if recovery > recover_min
+     recovery = recovery - recover_dec
+if stamina <= effort_dec_thr * stamina_max
+  if effort > effort_min
+    effort = effort - effort_dec
+      effort = max(effort, effort_min)
+if stamina >= effort_inc_thr * stamina\_max
+  if effort < effort_max
+    effort = effort + effort_inc
+    effort = min(effort, effort_max)
+stamina_inc = recovery * stamina_inc_max
+stamina = min(stamina + stamina_inc, stamina_max)
+if stamina_capacity >= 0.0
+  if stamina_inc > stamina_capacity
+    stamina_inc = stamina_capacity
+stamina = min(stamina + stamina_inc, stamina_max)
+if stamina_capacity >= 0.0
+  stamina_capacity = max(0.0, stamina_capacity - stamina_inc)
+
+KICK --> O ekp (forca efetiva de kick) = kick_power * kick_power_rate * (1 - dir_diff/720 - dist_ball/(4*kickable_margin))
+onde kick_power eh a forca aplicada multiplicada por um fator proporcional ao angulo relativo entre o body e o angulo de chute (100% para 0 graus, 75% para 180 graus)
+dist_ball e dir_diff sao a distancia ate a bola e angulo relativo
+kick_power_rate e kickable_margin sao parametros do servidor
+
+TURN BODY --> O angulo do corpo do jogador eh dado por theta = momento / (1 + momento_de_inercia * (vx[t], vy[t]))
+onde o momento eh argumento da funcao e momento_de_inercia eh um parametro do servidor
+
+TURN NECK --> O comando de turnneck atualiza o neckangle do jogador, sem ruido ou risco associado
