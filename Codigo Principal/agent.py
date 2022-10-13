@@ -126,7 +126,7 @@ class Agent:
         if dirtoself < 0:
             dirtoself += 2*math.pi
         dirtoself = dirtoself*180/math.pi
-        self.wm.ah.pointto(dirtoself, disttoself)
+        self.wm.ah.pointto(disttoself, dirtoself)
 
 
     def think(self):
