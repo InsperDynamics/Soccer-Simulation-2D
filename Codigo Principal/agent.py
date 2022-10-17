@@ -136,16 +136,13 @@ class Agent:
         formacaoKickoff(self, WorldModel)
         #ataqueBasico(self, WorldModel)
         acaoJogadores = queryModel(game_state)
-        if self.wm.side == WorldModel.SIDE_L:
-            selfX = self.game_state.playerX[self.wm.uniform_number - 1]
-            selfY = self.game_state.playerY[self.wm.uniform_number - 1]
-            selfSTA = self.game_state.playerStamina[self.wm.uniform_number - 1]
-            acao = acaoJogadores[self.wm.uniform_number - 1]
-        else:
-            selfX = self.game_state.playerX[11 + self.wm.uniform_number - 1]
-            selfY = self.game_state.playerY[11 + self.wm.uniform_number - 1]
-            selfSTA = self.game_state.playerStamina[11 + self.wm.uniform_number - 1]
-            acao = acaoJogadores[11 + self.wm.uniform_number - 1]
+        uniform = self.wm.uniform_number - 1
+        if self.wm.side == WorldModel.SIDE_R:
+            uniform += 11
+        selfX = self.game_state.playerX[uniform]
+        selfY = self.game_state.playerY[uniform]
+        selfSTA = self.game_state.playerStamina[uniform]
+        acao = acaoJogadores[uniform]
         self.transmit_say(selfX, selfY, selfSTA)
         self.transmit_pointto(selfX, selfY)
         #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
@@ -153,7 +150,8 @@ class Agent:
         self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
         self.game_state.score_left = self.wm.score_l
         self.game_state.score_right = self.wm.score_r
-        self.game_state = self.game_state.new_observation(self.wm.ball, self.wm.flags, self.wm.goals, self.wm.lines, self.wm.players)
+        self.game_state.uniform = uniform
+        self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
         self.game_state_estimator.update(self.game_state, acaoJogadores)
 
 
