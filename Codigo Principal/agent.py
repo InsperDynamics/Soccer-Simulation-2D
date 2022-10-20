@@ -122,6 +122,7 @@ class Agent:
         self.wm.ah.say(msg)
 
     def transmit_pointto(self, selfX, selfY):
+        #sempre aponta para a bola
         disttoself = math.sqrt((selfX - self.ballX)**2 + (selfY - self.ballY)**2)
         dirtoself = math.atan2(self.ballY - selfY, self.ballX - selfX)
         if dirtoself < 0:
