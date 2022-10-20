@@ -108,6 +108,7 @@ class Agent:
                 time.sleep(0.0001)
 
     def transmit_say(self, selfX, selfY, selfSTA):
+        #formato "NXYNXYNXYS" (camisa, x e y de si mesmo e dos 2 jogadores mais próximos, e a stamina de si mesmo)
         disttoself = []
         for i in range(22):
             disttoself.append(math.sqrt((selfX - self.game_state.playerX[i])**2 + (selfY - self.game_state.playerY[i])**2))
@@ -116,18 +117,18 @@ class Agent:
         characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
         for playerid in idsofsorted[0:3]:
             msg += characters[playerid]
-            msg += characters[int(round(self.game_state.playerX[playerid]/2) + 55)]
-            msg += characters[int(round(self.game_state.playerY[playerid]) + 35)]
+            msg += characters[int(round((self.game_state.playerX[playerid] + 55)/2))]
+            msg += characters[int(round(self.game_state.playerY[playerid] + 35))]
         msg += characters[int(round(selfSTA))]
         self.wm.ah.say(msg)
 
-    # def transmit_pointto(self, selfX, selfY):
-    #     disttoself = math.sqrt((selfX - self.ballX)**2 + (selfY - self.ballY)**2)
-    #     dirtoself = math.atan2(self.ballY - selfY, self.ballX - selfX)
-    #     if dirtoself < 0:
-    #         dirtoself += 2*math.pi
-    #     dirtoself = dirtoself*180/math.pi
-    #     self.wm.ah.pointto(disttoself, dirtoself)
+    def transmit_pointto(self, selfX, selfY):
+        disttoself = math.sqrt((selfX - self.ballX)**2 + (selfY - self.ballY)**2)
+        dirtoself = math.atan2(self.ballY - selfY, self.ballX - selfX)
+        if dirtoself < 0:
+            dirtoself += 2*math.pi
+        dirtoself = dirtoself*180/math.pi
+        self.wm.ah.pointto(disttoself, dirtoself)
 
 
     def think(self):
@@ -135,27 +136,27 @@ class Agent:
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
         formacaoKickoff(self, WorldModel)
-        ataqueBasico(self, WorldModel)
-        # acaoJogadores = queryModel(game_state)
+        #ataqueBasico(self, WorldModel)
+        acaoJogadores = queryModel(game_state)
         if self.wm.side == WorldModel.SIDE_L:
             selfX = self.game_state.playerX[self.wm.uniform_number - 1]
             selfY = self.game_state.playerY[self.wm.uniform_number - 1]
             selfSTA = self.game_state.playerStamina[self.wm.uniform_number - 1]
-            # acao = acaoJogadores[self.wm.uniform_number - 1]
+            acao = acaoJogadores[self.wm.uniform_number - 1]
         else:
             selfX = self.game_state.playerX[11 + self.wm.uniform_number - 1]
             selfY = self.game_state.playerY[11 + self.wm.uniform_number - 1]
             selfSTA = self.game_state.playerStamina[11 + self.wm.uniform_number - 1]
-            # acao = acaoJogadores[11 + self.wm.uniform_number - 1]
-        # self.transmit_say(selfX, selfY, selfSTA)
-        # self.transmit_pointto(selfX, selfY)
+            acao = acaoJogadores[11 + self.wm.uniform_number - 1]
+        self.transmit_say(selfX, selfY, selfSTA)
+        self.transmit_pointto(selfX, selfY)
         #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
         self.game_state.game_tick = self.wm.sim_time
         self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
         self.game_state.score_left = self.wm.score_l
         self.game_state.score_right = self.wm.score_r
         self.game_state = self.game_state.new_observation(self.wm.ball, self.wm.flags, self.wm.goals, self.wm.lines, self.wm.players)
-        # self.game_state_estimator.update(self.game_state, acaoJogadores)
+        self.game_state_estimator.update(self.game_state, acaoJogadores)
 
 
 

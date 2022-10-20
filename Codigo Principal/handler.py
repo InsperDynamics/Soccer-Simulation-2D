@@ -123,22 +123,16 @@ class MessageHandler:
         """
         Parses audible information and turns it into useful information.
         """
-
         time_recvd = msg[1] # server cycle when message was heard
         sender = msg[2] # name (or direction) of who sent the message
         message = msg[3] # message string
-
         # ignore messages sent by self (NOTE: would anybody really want these?)
         if sender == "self":
             return
-
         # handle messages from the referee, to update game state
         elif sender == "referee":
             # change the name for convenience's sake
             mode = message
-
-            # deal first with messages that shouldn't be passed on to the agent
-
             # keep track of scores by setting them to the value reported.  this
             # precludes any possibility of getting out of sync with the server.
             if mode.startswith(WorldModel.RefereeMessages.GOAL_L):
@@ -148,43 +142,36 @@ class MessageHandler:
             elif mode.startswith(WorldModel.RefereeMessages.GOAL_R):
                 self.wm.score_r = int(mode.rsplit("_", 1)[1])
                 return
-
             # ignore these messages, but pass them on to the agent. these don't
             # change state but could still be useful.
             elif mode in (WorldModel.RefereeMessages.FOUL_L, WorldModel.RefereeMessages.FOUL_R, WorldModel.RefereeMessages.GOALIE_CATCH_BALL_L, WorldModel.RefereeMessages.GOALIE_CATCH_BALL_R, WorldModel.RefereeMessages.TIME_UP_WITHOUT_A_TEAM, WorldModel.RefereeMessages.HALF_TIME, WorldModel.RefereeMessages.TIME_EXTENDED):
-
                 # messages are named 3-tuples of (time, sender, message)
                 ref_msg = self.Message(time_recvd, sender, message)
-
                 # pass this message on to the player and return
-                self.wm.last_message = ref_msg
+                self.wm.last_message_referee = ref_msg
                 return
-
             # deal with messages that indicate game mode, but that the agent
             # doesn't need to know about specifically.
             else:
                 # set the mode to the referee reported mode string
                 self.wm.play_mode = mode
                 return
-
         # all other messages are treated equally
         else:
             # update the model's last heard message
             new_msg = MessageHandler.Message(time_recvd, sender, message)
-            self.wm.prev_message = new_msg
+            self.wm.last_message_teammate = new_msg
 
     def _handle_sense_body(self, msg):
         """
         Deals with the agent's body model information.
         """
-
         # update the body model information when received. each piece of info is
         # a list with the first item as the name of the data, and the rest as
         # the values.
         for info in msg[2:]:
             name = info[0]
             values = info[1:]
-
             if name == "view_mode":
                 self.wm.view_quality = values[0]
                 self.wm.view_width = values[1]
@@ -196,7 +183,6 @@ class MessageHandler:
                 self.wm.speed_direction = values[1]
             elif name == "head_angle":
                 self.wm.neck_direction = values[0]
-
             # these update the counts of the basic actions taken
             elif name == "kick":
                 self.wm.kick_count = values[0]
@@ -214,7 +200,6 @@ class MessageHandler:
                 self.wm.move_count = values[0]
             elif name == "change_view":
                 self.wm.change_view_count = values[0]
-
             # we leave unknown values out of the equation
             else:
                 pass
