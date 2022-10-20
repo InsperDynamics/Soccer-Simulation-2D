@@ -54,7 +54,8 @@ class WorldModel:
         self.teamname = None
         self.side = None
         self.uniform_number = None
-        self.last_message = None
+        self.last_message_referee = None
+        self.last_message_teammate = None
         self.play_mode = WorldModel.PlayModes.BEFORE_KICK_OFF
         self.view_width = None
         self.view_quality = None

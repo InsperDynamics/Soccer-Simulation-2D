@@ -107,6 +107,7 @@ class Agent:
                 time.sleep(0.0001)
 
     def transmit_say(self, selfX, selfY, selfSTA):
+        #formato "NXYNXYNXYS" (camisa, x e y de si mesmo e dos 2 jogadores mais próximos, e a stamina de si mesmo)
         disttoself = []
         for i in range(22):
             disttoself.append(math.sqrt((selfX - self.game_state.playerX[i])**2 + (selfY - self.game_state.playerY[i])**2))
@@ -115,8 +116,8 @@ class Agent:
         characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
         for playerid in idsofsorted[0:3]:
             msg += characters[playerid]
-            msg += characters[int(round(self.game_state.playerX[playerid]/2) + 55)]
-            msg += characters[int(round(self.game_state.playerY[playerid]) + 35)]
+            msg += characters[int(round((self.game_state.playerX[playerid] + 55)/2))]
+            msg += characters[int(round(self.game_state.playerY[playerid] + 35))]
         msg += characters[int(round(selfSTA))]
         self.wm.ah.say(msg)
 
@@ -151,6 +152,7 @@ class Agent:
         self.game_state.score_left = self.wm.score_l
         self.game_state.score_right = self.wm.score_r
         self.game_state.uniform = uniform
+        self.game_state.interpret_hear(self.wm.last_message_teammate)
         self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
         self.game_state_estimator.update(self.game_state, acaoJogadores)
 
