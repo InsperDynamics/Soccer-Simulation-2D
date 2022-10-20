@@ -6,7 +6,7 @@ import time
 import sock
 import sp_exceptions
 import handler
-import math
+from math import *
 from world_model import WorldModel
 
 
@@ -43,26 +43,73 @@ class Trainer:
         self.__think_thread.daemon = True
         self.__connected = True
         print('Sou o Trainer e estou conectado')
-
-    def change_mode(play_mode):
-        # modes : kick_off, free_kick, kick_in, or corner_kick, 
-
+    
+    def check_ball(self,):
         pass
 
-    def move(x,y,vx=0,vy=0):
+    def look(self,):
+        pass
+
+    def team_names(self,):
+        pass
+
+    def ear(self,mode):
+        
         pass
     
-    def check_ball():
+    def eye(self,):
         pass
 
-    def start():
+
+    def move(self,):
+        pass 
+    
+    def recover(self,):
+        pass 
+
+    def change_player_type(self,):
+        pass 
+
+
+    def say(self,):
+        pass 
+
+    def compression(self,):
         pass
 
-    def recover():
+    def done(self,):
+        pass 
+
+    def illegal(self,):
+        pass 
+
+    
+
+    def change_mode(self, play_mode):
+        # modes : kick_off, free_kick, kick_in, or corner_kick, 
+        self.wm.play_mode = play_mode
         pass
 
-    def ear(mode):
+    def move_player(self,object,x,y,vx=0,vy=0): #object pode ser player ou bola
+        distance = sqrt(x**2 + y**2)
+        direction = atan(y/x) - atan(object.direction)
+        object.distance = distance
+        object.direction = direction
+
         pass
+
+    def move_ball(self,object,x,y,vx=0,vy=0): #object pode ser player ou bola
+        distance = sqrt(x**2 + y**2)
+
+        pass
+    
+
+    def start(self):
+        self.wm.play_mode = "kick_off_l"
+
+
+    def recover(self):
+        self.wm.stamina = 8000
 
     
         

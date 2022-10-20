@@ -13,6 +13,7 @@ from world_model import WorldModel
 from estrategia_basica import *
 from kalman_estimator import *
 from estrategia_ML import *
+from coach import *
 
 class Agent:
     def __init__(self):
@@ -126,9 +127,8 @@ class Agent:
             self.wm.ah.say(msg)
 
     def transmit_pointto(self, selfX, selfY):
-        #sempre aponta para a bola
-        disttoself = math.sqrt((selfX - self.game_state.ballX)**2 + (selfY - self.game_state.ballY)**2)
-        dirtoself = math.atan2(self.game_state.ballY - selfY, self.game_state.ballX - selfX)
+        disttoself = math.sqrt((selfX - self.ballX)**2 + (selfY - self.ballY)**2)
+        dirtoself = math.atan2(self.ballY - selfY, self.ballX - selfX)
         if dirtoself < 0:
             dirtoself += 2*math.pi
         dirtoself = dirtoself*180/math.pi
@@ -140,27 +140,27 @@ class Agent:
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
         formacaoKickoff(self, WorldModel)
-        if not self.wm.is_before_kick_off():
-            #ataqueBasico(self, WorldModel)
-            acaoJogadores = queryModel(game_state)
-            uniform = self.wm.uniform_number - 1
-            if self.wm.side == WorldModel.SIDE_R:
-                uniform += 11
-            selfX = self.game_state.playerX[uniform]
-            selfY = self.game_state.playerY[uniform]
-            selfSTA = self.game_state.playerStamina[uniform]
-            acao = acaoJogadores[uniform]
-            self.transmit_say(selfX, selfY, selfSTA)
-            self.transmit_pointto(selfX, selfY)
-            #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
-            self.game_state.game_tick = self.wm.sim_time
-            self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
-            self.game_state.score_left = self.wm.score_l
-            self.game_state.score_right = self.wm.score_r
-            self.game_state.uniform = uniform
-            self.game_state.interpret_hear(self.wm.last_message_teammate)
-            self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
-            self.game_state_estimator.update(self.game_state, acaoJogadores)
+        #ataqueBasico(self, WorldModel)
+        acaoJogadores = queryModel(game_state)
+        if self.wm.side == WorldModel.SIDE_L:
+            selfX = self.game_state.playerX[self.wm.uniform_number - 1]
+            selfY = self.game_state.playerY[self.wm.uniform_number - 1]
+            selfSTA = self.game_state.playerStamina[self.wm.uniform_number - 1]
+            acao = acaoJogadores[self.wm.uniform_number - 1]
+        else:
+            selfX = self.game_state.playerX[11 + self.wm.uniform_number - 1]
+            selfY = self.game_state.playerY[11 + self.wm.uniform_number - 1]
+            selfSTA = self.game_state.playerStamina[11 + self.wm.uniform_number - 1]
+            acao = acaoJogadores[11 + self.wm.uniform_number - 1]
+        self.transmit_say(selfX, selfY, selfSTA)
+        self.transmit_pointto(selfX, selfY)
+        #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
+        self.game_state.game_tick = self.wm.sim_time
+        self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
+        self.game_state.score_left = self.wm.score_l
+        self.game_state.score_right = self.wm.score_r
+        self.game_state = self.game_state.new_observation(self.wm.ball, self.wm.flags, self.wm.goals, self.wm.lines, self.wm.players)
+        self.game_state_estimator.update(self.game_state, acaoJogadores)
 
 
 
@@ -171,10 +171,11 @@ if __name__ == "__main__":
     team_name = sys.argv[1]
     num_players = int(sys.argv[2])
 
+
     def spawn_agent(team_name, goalie):
         a = Agent()
         a.connect("localhost", 6000, team_name, goalie=goalie)
-        a.play()
+        # a.play()
         while 1:
             time.sleep(1)
 
@@ -189,7 +190,8 @@ if __name__ == "__main__":
         at.daemon = True
         at.start()
         agentthreads.append(at)
-    print("Agentes iniciados")
+
+
 
     try:
         while 1:
