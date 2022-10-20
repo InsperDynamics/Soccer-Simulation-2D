@@ -20,7 +20,7 @@ class game_state:
         self.ballVY = 0
 
     def get_object_absolute_coords(self, obj):
-        if obj.distance is None:
+        if obj.distance is None or obj.direction is None or obj.dist_change is None or obj.dir_change is None:
             return None
         dx = obj.distance * math.cos(obj.direction)
         dy = obj.distance * math.sin(obj.direction)
@@ -36,21 +36,25 @@ class game_state:
                 player_id = characters.index(str(last_message_teammate[i * 3]))
                 self.playerX[player_id] = (characters.index(str(last_message_teammate[i * 3 + 1])) * 2) - 55
                 self.playerY[player_id] = (characters.index(str(last_message_teammate[i * 3 + 2])) * 1) - 35
-            self.playerStamina[characters.index(str(last_message_teammate[0]))] = characters.index(str(last_message_teammate[9]))
+            self.playerStamina[characters.index(str(last_message_teammate[0]))] = characters.index(str(last_message_teammate[9])) * 200
 
     def new_observation(self, self_abs_coords, self_abs_body_dir, self_abs_neck_dir, ball_observation, players_observation):
         (self.playerX[self.uniform], self.playerY[self.uniform]) = self_abs_coords
         self.playerBodyAngle[self.uniform] = self_abs_body_dir
         self.playerNeckAngle[self.uniform] = self_abs_neck_dir
         if ball_observation is not None:
-            (self.ballX, self.ballY, self.ballVX, self.ballVY) = self.get_object_absolute_coords(ball_observation)
+            abscords = self.get_object_absolute_coords(ball_observation)
+            if abscords is not None:
+                (self.ballX, self.ballY, self.ballVX, self.ballVY) = abscords
         for player in players_observation:
             if player.uniform_number is not None:
                 if player.side == 'r':
                     player_id = player.uniform_number + 11 - 1
                 else:
                     player_id = player.uniform_number - 1
-                (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)
+                abscords = self.get_object_absolute_coords(player)
+                if abscords is not None:
+                    (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)
                 self.playerBodyAngle[player_id] = player.body_direction
                 self.playerNeckAngle[player_id] = player.neck_direction
         return self
