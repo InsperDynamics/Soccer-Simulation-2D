@@ -125,7 +125,10 @@ class MessageHandler:
         """
         time_recvd = msg[1] # server cycle when message was heard
         sender = msg[2] # name (or direction) of who sent the message
-        message = msg[3] # message string
+        if len(msg) >= 6:
+            message = msg[5] # message string
+        else:
+            message = msg[3] # message string
         # ignore messages sent by self (NOTE: would anybody really want these?)
         if sender == "self":
             return

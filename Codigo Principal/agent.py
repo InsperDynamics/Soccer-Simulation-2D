@@ -123,6 +123,7 @@ class Agent:
                 msg += characters[int(round((self.game_state.playerX[playerid] + 55)/2))]
                 msg += characters[int(round(self.game_state.playerY[playerid] + 35))]
             msg += characters[int(round(selfSTA/200))]
+            #print(len(msg), msg)
             self.wm.ah.say(msg)
 
     def transmit_pointto(self, selfX, selfY):
@@ -158,7 +159,7 @@ class Agent:
             self.game_state.score_left = self.wm.score_l
             self.game_state.score_right = self.wm.score_r
             self.game_state.uniform = uniform
-            #self.game_state.interpret_hear(self.wm.last_message_teammate)
+            self.game_state.interpret_hear(self.wm.last_message_teammate)
             self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
             #self.game_state_estimator.update(self.game_state, acaoJogadores)
 

@@ -4,9 +4,9 @@ pattern_int = re.compile("^-?\d+$")
 pattern_float = re.compile("^-?\d*[.]\d+$")
 
 def parse(text):
-    if text.count("(") != text.count(")"):
-        print("O texto da mensagem tem parênteses não correspondentes: " + str(text))
-        return
+    #if text.count("(") != text.count(")"):
+    #    print("O texto da mensagem tem parênteses não correspondentes: " + str(text))
+    #    return
     result = []
     indent = 0
     s = []

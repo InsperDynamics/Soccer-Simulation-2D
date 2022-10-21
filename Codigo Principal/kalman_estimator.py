@@ -30,13 +30,18 @@ class game_state:
 
     def interpret_hear(self, last_message_teammate):
         if last_message_teammate is not None:
-            #formato "NXYNXYNXYS" (camisa, x e y do sender e dos 2 jogadores mais próximos a ele, e a stamina do sender)
-            characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
-            for i in range(3):
-                player_id = characters.index(str(last_message_teammate[i * 3]))
-                self.playerX[player_id] = (characters.index(str(last_message_teammate[i * 3 + 1])) * 2) - 55
-                self.playerY[player_id] = (characters.index(str(last_message_teammate[i * 3 + 2])) * 1) - 35
-            self.playerStamina[characters.index(str(last_message_teammate[0]))] = characters.index(str(last_message_teammate[9])) * 200
+            #print(len(last_message_teammate.message), last_message_teammate.message)
+            if len(last_message_teammate.message) == 10:
+                #formato "NXYNXYNXYS" (camisa, x e y do sender e dos 2 jogadores mais próximos a ele, e a stamina do sender)
+                characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
+                try:
+                    for i in range(3):
+                        player_id = characters.index(str(last_message_teammate.message[i * 3]))
+                        self.playerX[player_id] = (characters.index(str(last_message_teammate.message[i * 3 + 1])) * 2) - 55
+                        self.playerY[player_id] = (characters.index(str(last_message_teammate.message[i * 3 + 2])) * 1) - 35
+                    self.playerStamina[characters.index(str(last_message_teammate.message[0]))] = characters.index(str(last_message_teammate.message[9])) * 200
+                except Exception as e:
+                    print(e)
 
     def new_observation(self, self_abs_coords, self_abs_body_dir, self_abs_neck_dir, ball_observation, players_observation):
         (self.playerX[self.uniform], self.playerY[self.uniform]) = self_abs_coords
@@ -57,6 +62,8 @@ class game_state:
                     (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)
                 self.playerBodyAngle[player_id] = player.body_direction
                 self.playerNeckAngle[player_id] = player.neck_direction
+        #print(self.playerX[self.uniform], self.playerY[self.uniform])
+        #print(self.ballX, self.ballY)
         return self
 
 
