@@ -41,6 +41,7 @@ class game_state:
                         player_id = characters.index(str(last_message_teammate.message[i * 3]))
                         self.playerX[player_id] = (characters.index(str(last_message_teammate.message[i * 3 + 1])) * 2) - 55
                         self.playerY[player_id] = (characters.index(str(last_message_teammate.message[i * 3 + 2])) * 1) - 35
+                        self.playerTimeSinceLastObs[player_id] = 0
                 except Exception as e:
                     print(e)
 
