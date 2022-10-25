@@ -1,5 +1,5 @@
 def formacaoKickoff(self, WorldModel):
-    print(self.wm.play_mode)
+    #print(self.wm.play_mode)
     # if not self.in_kick_off_formation:
     if self.wm.play_mode in [WorldModel.PlayModes.BEFORE_KICK_OFF,
                             WorldModel.PlayModes.KICK_OFF_R,

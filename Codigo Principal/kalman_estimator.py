@@ -62,8 +62,6 @@ class game_state:
                     (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)
                 self.playerBodyAngle[player_id] = player.body_direction
                 self.playerNeckAngle[player_id] = player.neck_direction
-        #print(self.playerX[self.uniform], self.playerY[self.uniform])
-        #print(self.ballX, self.ballY)
         return self
 
 
