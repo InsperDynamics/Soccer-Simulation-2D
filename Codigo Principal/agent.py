@@ -106,8 +106,8 @@ class Agent:
             else:
                 time.sleep(0.0001)
 
-    def transmit_say(self, selfX, selfY, selfSTA):
-        #formato "NXYNXYNXYS" (camisa, x e y de si mesmo e dos 2 jogadores mais próximos, e a stamina de si mesmo)
+    def transmit_say(self, selfX, selfY):
+        #formato "NXYNXYNXY" (camisa, x e y de si mesmo e dos 2 jogadores mais próximos)
         disttoself = []
         for i in range(22):
             try:
@@ -123,7 +123,6 @@ class Agent:
                     msg += characters[playerid]
                     msg += characters[int(round((self.game_state.playerX[playerid] + 55)/2))]
                     msg += characters[int(round(self.game_state.playerY[playerid] + 35))]
-                msg += characters[int(round(selfSTA/200))]
                 #print(len(msg), msg)
                 self.wm.ah.say(msg)
             except IndexError:
@@ -138,7 +137,6 @@ class Agent:
         dirtoself = math.degrees(dirtoself)
         dirtoself = selfBodyDir + dirtoself
         self.wm.ah.pointto(disttoself, dirtoself)
-        print(selfBodyDir)
 
 
     def think(self):
@@ -155,7 +153,6 @@ class Agent:
             selfX = self.game_state.playerX[uniform]
             selfY = self.game_state.playerY[uniform]
             selfBodyDir = self.game_state.playerBodyAngle[uniform]
-            selfSTA = self.game_state.playerStamina[uniform]
             #acao = acaoJogadores[uniform]
             #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
             self.game_state.game_tick = self.wm.sim_time
@@ -166,7 +163,7 @@ class Agent:
             self.game_state.interpret_hear(self.wm.last_message_teammate)
             self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
             #self.game_state_estimator.update(self.game_state, acaoJogadores)
-            self.transmit_say(selfX, selfY, selfSTA)
+            self.transmit_say(selfX, selfY)
             #self.transmit_pointto(selfX, selfY, selfBodyDir)
 
 

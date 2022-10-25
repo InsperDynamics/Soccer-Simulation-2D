@@ -2,7 +2,6 @@ import math
 
 class game_state:
     def __init__(self,):
-        self.uniform = 1
         self.game_tick = 0
         self.game_isPaused = True
         self.score_left = 0
@@ -13,11 +12,12 @@ class game_state:
         self.playerVY = [0] * 22
         self.playerBodyAngle = [0] * 11 + [180] * 11
         self.playerNeckAngle = [0] * 11 + [180] * 11
-        self.playerStamina = [8000] * 22
         self.ballX = 0
         self.ballY = 0
         self.ballVX = 0
         self.ballVY = 0
+
+        self.uniform = 1
 
     def get_object_absolute_coords(self, obj):
         if obj.distance is None or obj.direction is None or obj.dist_change is None or obj.dir_change is None:
@@ -31,15 +31,14 @@ class game_state:
     def interpret_hear(self, last_message_teammate):
         if last_message_teammate is not None:
             #print(len(last_message_teammate.message), last_message_teammate.message)
-            if len(last_message_teammate.message) == 10:
-                #formato "NXYNXYNXYS" (camisa, x e y do sender e dos 2 jogadores mais próximos a ele, e a stamina do sender)
+            if len(str(last_message_teammate.message)) == 9:
+                #formato "NXYNXYNXY" (camisa, x e y do sender e dos 2 jogadores mais próximos a ele)
                 characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "(", ")", ".", "+", "*", "/", "?", "<", ">"]
                 try:
                     for i in range(3):
                         player_id = characters.index(str(last_message_teammate.message[i * 3]))
                         self.playerX[player_id] = (characters.index(str(last_message_teammate.message[i * 3 + 1])) * 2) - 55
                         self.playerY[player_id] = (characters.index(str(last_message_teammate.message[i * 3 + 2])) * 1) - 35
-                    self.playerStamina[characters.index(str(last_message_teammate.message[0]))] = characters.index(str(last_message_teammate.message[9])) * 200
                 except Exception as e:
                     print(e)
 
