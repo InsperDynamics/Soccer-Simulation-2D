@@ -141,9 +141,11 @@ class MessageHandler:
             if mode.startswith(WorldModel.RefereeMessages.GOAL_L):
                 # split off the number, the part after the rightmost '_'
                 self.wm.score_l = int(mode.rsplit("_", 1)[1])
+                self.wm.play_mode = WorldModel.PlayModes.GOAL_L
                 return
             elif mode.startswith(WorldModel.RefereeMessages.GOAL_R):
                 self.wm.score_r = int(mode.rsplit("_", 1)[1])
+                self.wm.play_mode = WorldModel.PlayModes.GOAL_R
                 return
             # ignore these messages, but pass them on to the agent. these don't
             # change state but could still be useful.
@@ -306,7 +308,8 @@ class ActionHandler:
         msg = "(move %.10f %.10f)" % (x, y)
         cmd_type = ActionHandler.CommandType.TYPE_PRIMARY
         cmd = ActionHandler.Command(cmd_type, msg)
-        self.q.put(cmd)
+        #self.q.put(cmd)
+        self.sock.send(cmd.text)
 
     def turn(self, relative_degrees):
         msg = "(turn %.10f)" % relative_degrees

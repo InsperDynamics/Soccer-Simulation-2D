@@ -23,6 +23,8 @@ class WorldModel:
         DROP_BALL = "drop_ball"
         OFFSIDE_L = "offside_l"
         OFFSIDE_R = "offside_r"
+        GOAL_L = "goal_l"
+        GOAL_R = "goal_r"
         def __init__(self):
             raise NotImplementedError("Nao crie um objeto playmode. Acesse pelo WorldModel")
 
@@ -314,6 +316,7 @@ class WorldModel:
 
     def teleport_to_point(self, point):
         self.ah.move(point[0], point[1])
+        print("Teleport")
 
 
     def align_neck_with_body(self):

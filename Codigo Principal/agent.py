@@ -143,8 +143,11 @@ class Agent:
         #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI!
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
-        formacaoKickoff(self, WorldModel)
-        if not self.wm.is_before_kick_off():
+        if self.wm.play_mode in [WorldModel.PlayModes.BEFORE_KICK_OFF,
+                            WorldModel.PlayModes.GOAL_L,
+                            WorldModel.PlayModes.GOAL_R,]:
+            formacaoKickoff(self, WorldModel)
+        else:
             ataqueBasico(self, WorldModel)
             #acaoJogadores = queryModel(game_state)
             uniform = self.wm.uniform_number - 1
