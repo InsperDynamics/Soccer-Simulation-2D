@@ -6,12 +6,14 @@ class game_state:
         self.game_isPaused = True
         self.score_left = 0
         self.score_right = 0
+        self.playerTimeSinceLastObs = [0] * 22
         self.playerX = [-50, -40, -40, -40, -5, -20, -20, -20, -10, -5, -10, 50, 40, 40, 40, 5, 20, 20, 20, 10, 5, 10]
         self.playerY = [0, 15, 0, -15, -30, 20, 0, -20, 10, 30, -10, 0, 15, 0, -15, -30, 20, 0, -20, 10, 30, -10]
         self.playerVX = [0] * 22
         self.playerVY = [0] * 22
         self.playerBodyAngle = [0] * 11 + [180] * 11
         self.playerNeckAngle = [0] * 11 + [180] * 11
+        self.ballTimeSinceLastObs = 0
         self.ballX = 0
         self.ballY = 0
         self.ballVX = 0
@@ -47,15 +49,21 @@ class game_state:
         self.playerBodyAngle[self.uniform] = self_abs_body_dir
         self.playerNeckAngle[self.uniform] = self_abs_neck_dir
         if ball_observation is not None:
+            self.ballTimeSinceLastObs = 0
             abscords = self.get_object_absolute_coords(ball_observation)
             if abscords is not None:
                 (self.ballX, self.ballY, self.ballVX, self.ballVY) = abscords
+        else:
+            self.ballTimeSinceLastObs += 1
+        for player_id in range(22):
+            self.playerTimeSinceLastObs[player_id] += 1
         for player in players_observation:
             if player.uniform_number is not None:
                 if player.side == 'r':
                     player_id = player.uniform_number + 11 - 1
                 else:
                     player_id = player.uniform_number - 1
+                self.playerTimeSinceLastObs[player_id] = 0
                 abscords = self.get_object_absolute_coords(player)
                 if abscords is not None:
                     (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)

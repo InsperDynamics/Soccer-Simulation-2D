@@ -112,7 +112,7 @@ class Agent:
         for i in range(22):
             try:
                 disttoself.append(math.sqrt((selfX - self.game_state.playerX[i])**2 + (selfY - self.game_state.playerY[i])**2))
-            except IndexError:
+            except:
                 pass
         idsofsorted = sorted(range(len(disttoself)), key=lambda k: disttoself[k])
         if len(idsofsorted) > 2:
@@ -125,7 +125,7 @@ class Agent:
                     msg += characters[int(round(self.game_state.playerY[playerid] + 35))]
                 #print(len(msg), msg)
                 self.wm.ah.say(msg)
-            except IndexError:
+            except:
                 pass
 
     def transmit_pointto(self, selfX, selfY, selfBodyDir):
@@ -143,6 +143,24 @@ class Agent:
         #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI!
         if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
             raise Exception("Uma thread morreu!")
+        uniform = self.wm.uniform_number - 1
+        if self.wm.side == WorldModel.SIDE_R:
+            uniform += 11
+        selfX = self.game_state.playerX[uniform]
+        selfY = self.game_state.playerY[uniform]
+        selfBodyDir = self.game_state.playerBodyAngle[uniform]
+        self.game_state.game_tick = self.wm.sim_time
+        self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
+        self.game_state.score_left = self.wm.score_l
+        self.game_state.score_right = self.wm.score_r
+        self.game_state.uniform = uniform
+        self.game_state.interpret_hear(self.wm.last_message_teammate)
+        self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
+        #self.game_state_estimator.update(self.game_state, acaoJogadores)
+        self.transmit_say(selfX, selfY)
+        #self.transmit_pointto(selfX, selfY, selfBodyDir)
+        if uniform == 0:
+            print(self.game_state.playerTimeSinceLastObs)
         if self.wm.play_mode in [WorldModel.PlayModes.BEFORE_KICK_OFF,
                             WorldModel.PlayModes.GOAL_L,
                             WorldModel.PlayModes.GOAL_R,]:
@@ -150,25 +168,8 @@ class Agent:
         else:
             ataqueBasico(self, WorldModel)
             #acaoJogadores = queryModel(game_state)
-            uniform = self.wm.uniform_number - 1
-            if self.wm.side == WorldModel.SIDE_R:
-                uniform += 11
-            selfX = self.game_state.playerX[uniform]
-            selfY = self.game_state.playerY[uniform]
-            selfBodyDir = self.game_state.playerBodyAngle[uniform]
             #acao = acaoJogadores[uniform]
             #chamar funcoes do self.wm.ah baseado na acao (olhar handler.py)
-            self.game_state.game_tick = self.wm.sim_time
-            self.game_state.game_isPaused = (not self.wm.play_mode == WorldModel.PlayModes.PLAY_ON)
-            self.game_state.score_left = self.wm.score_l
-            self.game_state.score_right = self.wm.score_r
-            self.game_state.uniform = uniform
-            self.game_state.interpret_hear(self.wm.last_message_teammate)
-            self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
-            #self.game_state_estimator.update(self.game_state, acaoJogadores)
-            self.transmit_say(selfX, selfY)
-            #self.transmit_pointto(selfX, selfY, selfBodyDir)
-
 
 
 if __name__ == "__main__":

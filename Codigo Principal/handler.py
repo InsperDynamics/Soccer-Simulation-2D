@@ -66,9 +66,9 @@ class MessageHandler:
                 uniform_number = None
                 if len(name) >= 2:
                     teamname = name[1]
-                elif len(name) >= 3:
+                if len(name) >= 3:
                     uniform_number = name[2]
-                elif len(name) >= 4:
+                if len(name) >= 4:
                     position = name[3]
                 side = None
                 if teamname is not None:

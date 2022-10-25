@@ -29,6 +29,16 @@ else {
 }
 back_dash_rate e side_dash_rate sao parametros do server
 
+KICK --> O ekp (forca efetiva de kick) = kick_power * kick_power_rate * (1 - dir_diff/720 - dist_ball/(4*kickable_margin))
+onde kick_power eh a forca aplicada multiplicada por um fator proporcional ao angulo relativo entre o body e o angulo de chute (100% para 0 graus, 75% para 180 graus)
+dist_ball e dir_diff sao a distancia ate a bola e angulo relativo
+kick_power_rate e kickable_margin sao parametros do servidor
+
+TURN BODY --> O angulo do corpo do jogador eh dado por theta = momento / (1 + momento_de_inercia * (vx[t], vy[t]))
+onde o momento eh argumento da funcao e momento_de_inercia eh um parametro do servidor
+
+TURN NECK --> O comando de turnneck atualiza o neckangle do jogador, sem ruido ou risco associado
+
 STAMINA --> A stamina e o effort de um player seguem o seguinte codigo todo ciclo, onde todas as outras variaveis sao parametros do server:
 if stamina <= recover_dec_thr * stamina_max
   if recovery > recover_min
@@ -49,13 +59,3 @@ if stamina_capacity >= 0.0
 stamina = min(stamina + stamina_inc, stamina_max)
 if stamina_capacity >= 0.0
   stamina_capacity = max(0.0, stamina_capacity - stamina_inc)
-
-KICK --> O ekp (forca efetiva de kick) = kick_power * kick_power_rate * (1 - dir_diff/720 - dist_ball/(4*kickable_margin))
-onde kick_power eh a forca aplicada multiplicada por um fator proporcional ao angulo relativo entre o body e o angulo de chute (100% para 0 graus, 75% para 180 graus)
-dist_ball e dir_diff sao a distancia ate a bola e angulo relativo
-kick_power_rate e kickable_margin sao parametros do servidor
-
-TURN BODY --> O angulo do corpo do jogador eh dado por theta = momento / (1 + momento_de_inercia * (vx[t], vy[t]))
-onde o momento eh argumento da funcao e momento_de_inercia eh um parametro do servidor
-
-TURN NECK --> O comando de turnneck atualiza o neckangle do jogador, sem ruido ou risco associado
