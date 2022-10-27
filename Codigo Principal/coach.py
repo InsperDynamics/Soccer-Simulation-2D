@@ -30,20 +30,25 @@ class Trainer:
         self.wm = WorldModel(handler.ActionHandler(self.__sock))
         self.wm.teamname = teamname
         self.msg_handler = handler.MessageHandler(self.wm)
-        # self.game_state = game_state()
-        # self.game_state_estimator = game_state_estimator()
-        # self.__msg_thread = threading.Thread(target=self.__message_loop, name="message_loop")
-        # self.__msg_thread.daemon = True 
-        # self.__msg_thread.start()
         init_address = self.__sock.address
-
-        self.__sock.send((teamname, version))
+        init_msg = "(init %s (version %d))"
+        self.__sock.send(init_msg % (teamname, version))
         while self.__sock.address == init_address:
             time.sleep(0.0001)
+            print("waiting")
         self.__think_thread.daemon = True
         self.__connected = True
-        print('Sou o Trainer e estou conectado')
+        print('Sou o Coach e estou conectado')
     
+    def __message_loop(self):
+        # NAO CHAMAR EXTERNAMENTE!
+        while self.__parsing:
+            raw_msg = self.__sock.recv()
+            msg_type = self.msg_handler.handle_message(raw_msg)
+            if msg_type == handler.ActionHandler.CommandType.SENSE_BODY:
+                self.__send_commands = True
+            self.__should_think_on_data = True
+            
     def check_ball(self,):
         pass
 
@@ -120,7 +125,7 @@ if __name__ == "__main__":
 
     coach = Trainer()
 
-    coach.connect("localhost", 6001, team_name)
+    coach.connect("localhost", 6002, team_name)
 
 
     try:

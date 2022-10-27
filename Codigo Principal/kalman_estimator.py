@@ -51,7 +51,10 @@ class game_state:
                     player_id = player.uniform_number + 11 - 1
                 else:
                     player_id = player.uniform_number - 1
-                (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)
+                self.playerTimeSinceLastObs[player_id] = 0
+                abscords = self.get_object_absolute_coords(player)
+                if abscords is not None:
+                    (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = abscords
                 self.playerBodyAngle[player_id] = player.body_direction
                 self.playerNeckAngle[player_id] = player.neck_direction
         return self
