@@ -24,11 +24,11 @@ class game_state:
     def get_object_absolute_coords(self, obj):
         if obj.distance is None:
             return None
-        dx = obj.distance * np.cos(obj.direction)
-        dy = obj.distance * np.sin(obj.direction)
-        vx = obj.dist_change * np.cos(obj.dir_change)
-        vy = obj.dist_change * np.sin(obj.dir_change)
-        return (self.playerX[self.uniform] + dx, self.playerY[self.uniform] + dy, vx, vy)
+        dx = (obj.distance * np.cos(obj.direction) + self.lastBallObs.distance * np.cos(self.lastBallObs.direction))*0.5
+        dy = (obj.distance * np.sin(obj.direction) + self.lastBallObs.distance * np.sin(self.lastBallObs.direction))*0.5
+        vx = (obj.dist_change * np.cos(obj.dir_change) + self.lastBallObs.dist_change * np.cos(self.lastBallObs.dir_change))*0.5
+        vy = (obj.dist_change * np.sin(obj.dir_change) + self.lastBallObs.dist_change * np.sin(self.lastBallObs.dir_change))*0.5
+        return (self.playerX[self.uniform] + dx, self.playerY[self.uniform] + dy, vx, vy) 
 
     def interpret_hear(self, last_message_teammate):
         #formato "NXYNXYNXYS" (camisa, x e y do sender e dos 2 jogadores mais próximos a ele, e a stamina do sender)
@@ -45,6 +45,7 @@ class game_state:
         self.playerNeckAngle[self.uniform] = self_abs_neck_dir
         if ball_observation is not None:
             (self.ballX, self.ballY, self.ballVX, self.ballVY) = self.get_object_absolute_coords(ball_observation)
+            self.lastBallObs = ball_observation
         for player in players_observation:
             if player.uniform_number is not None:
                 if player.side == 'r':
@@ -57,6 +58,7 @@ class game_state:
                     (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = abscords
                 self.playerBodyAngle[player_id] = player.body_direction
                 self.playerNeckAngle[player_id] = player.neck_direction
+                self.lastPlayerObs[player_id] = player
         return self
 
 
