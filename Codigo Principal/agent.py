@@ -129,14 +129,11 @@ class Agent:
                 pass
 
     def transmit_pointto(self, selfX, selfY, selfBodyDir):
-        #sempre aponta para a bola
-        disttoself = math.sqrt((selfX - self.game_state.ballX)**2 + (selfY - self.game_state.ballY)**2)
-        dirtoself = math.atan2(self.game_state.ballY - selfY, self.game_state.ballX - selfX)
-        if dirtoself < 0:
-            dirtoself += 2*math.pi
-        dirtoself = math.degrees(dirtoself)
-        dirtoself = selfBodyDir + dirtoself
-        self.wm.ah.pointto(disttoself, dirtoself)
+        #sempre aponta para o centro do campo
+        disttoself = math.sqrt((selfX)**2 + (selfY)**2)
+        dirtoself = math.degrees(math.atan2(-selfY, -selfX))
+        dirtoself = selfBodyDir - dirtoself
+        self.wm.ah.pointto(disttoself, 0)
 
 
     def think(self):
@@ -157,10 +154,11 @@ class Agent:
         self.game_state.interpret_hear(self.wm.last_message_teammate)
         self.game_state = self.game_state.new_observation(self.wm.abs_coords, self.wm.abs_body_dir, self.wm.abs_neck_dir, self.wm.ball, self.wm.players)
         #self.game_state_estimator.update(self.game_state, acaoJogadores)
-        self.transmit_say(selfX, selfY)
-        #self.transmit_pointto(selfX, selfY, selfBodyDir)
-        if uniform == 0:
-            print(self.game_state.playerTimeSinceLastObs)
+        if selfX is not None and selfY is not None:
+            self.transmit_say(selfX, selfY)
+            self.transmit_pointto(selfX, selfY, selfBodyDir)
+        #if uniform == 0:
+        #    print(self.game_state.playerTimeSinceLastObs)
         if self.wm.play_mode in [WorldModel.PlayModes.BEFORE_KICK_OFF,
                             WorldModel.PlayModes.GOAL_L,
                             WorldModel.PlayModes.GOAL_R,]:

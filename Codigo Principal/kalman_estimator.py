@@ -6,20 +6,20 @@ class game_state:
         self.game_isPaused = True
         self.score_left = 0
         self.score_right = 0
-        self.playerTimeSinceLastObs = [0] * 22
         self.playerX = [-50, -40, -40, -40, -5, -20, -20, -20, -10, -5, -10, 50, 40, 40, 40, 5, 20, 20, 20, 10, 5, 10]
         self.playerY = [0, 15, 0, -15, -30, 20, 0, -20, 10, 30, -10, 0, 15, 0, -15, -30, 20, 0, -20, 10, 30, -10]
         self.playerVX = [0] * 22
         self.playerVY = [0] * 22
         self.playerBodyAngle = [0] * 11 + [180] * 11
         self.playerNeckAngle = [0] * 11 + [180] * 11
-        self.ballTimeSinceLastObs = 0
         self.ballX = 0
         self.ballY = 0
         self.ballVX = 0
         self.ballVY = 0
 
         self.uniform = 1
+        self.playerTimeSinceLastObs = [0] * 22
+        self.ballTimeSinceLastObs = 0
 
     def get_object_absolute_coords(self, obj):
         if obj.distance is None or obj.direction is None or obj.dist_change is None or obj.dir_change is None:
@@ -67,7 +67,7 @@ class game_state:
                 self.playerTimeSinceLastObs[player_id] = 0
                 abscords = self.get_object_absolute_coords(player)
                 if abscords is not None:
-                    (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = self.get_object_absolute_coords(player)
+                    (self.playerX[player_id], self.playerY[player_id], self.playerVX[player_id], self.playerVY[player_id]) = abscords
                 self.playerBodyAngle[player_id] = player.body_direction
                 self.playerNeckAngle[player_id] = player.neck_direction
         return self
