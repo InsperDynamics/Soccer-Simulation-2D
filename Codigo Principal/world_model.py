@@ -74,9 +74,9 @@ class WorldModel:
         self.catch_count = None
         self.move_count = None
         self.change_view_count = None
-        self.abs_coords = (None, None)
-        self.abs_neck_dir = None
-        self.abs_body_dir = None
+        self.abs_coords = (0, 0)
+        self.abs_neck_dir = 0
+        self.abs_body_dir = 0
         self.server_parameters = ServerParameters()
 
 
@@ -182,7 +182,8 @@ class WorldModel:
         self.players = players
         self.lines = lines
         flag_dict = game_object.Flag.FLAG_COORDS
-        self.abs_coords = self.triangulate_position(self.flags, flag_dict)
+        new_pos_cluster = self.triangulate_position(self.flags, flag_dict)
+        self.abs_coords = (self.abs_coords[0]*0.5 + new_pos_cluster[0]*0.5, self.abs_coords[1]*0.5 + new_pos_cluster[1]*0.5)
         self.abs_neck_dir = self.triangulate_direction(self.flags, flag_dict)
         if self.abs_neck_dir is not None and self.neck_direction is not None:
             self.abs_body_dir = self.abs_neck_dir - self.neck_direction
@@ -228,27 +229,6 @@ class WorldModel:
         return self.server_parameters.ball_speed_max
 
 
-    # def kick_to(self, point, extra_power=0.0):
-    #     # pega distancia e angulo do ponto alvo pro chute
-    #     point_dist = self.euclidean_distance(self.abs_coords, point)
-    #     abs_point_dir = self.angle_between_points(self.abs_coords, point)
-    #     if self.abs_body_dir is not None:
-    #         rel_point_dir = self.abs_body_dir - abs_point_dir
-    #         # interpola assumindo que forca maxima (100) faz a bola andar 45 unidades 
-    #         # (PRECISA MEXER SE O PARAMETRO DA COMPETICAO MUDAR!!)
-    #         max_kick_dist = 55.0
-    #         dist_ratio = point_dist / max_kick_dist
-    #         # calcula forca para fazer a bola parar no ponto
-    #         required_power = dist_ratio * self.server_parameters.maxpower
-    #         effective_power = self.get_effective_kick_power(self.ball, required_power)
-    #         if required_power:
-    #             required_power += 1 - (effective_power / required_power)
-    #             # forca extra se quisermos fazer a bola passar do ponto
-    #             power_mod = 1.0 + extra_power
-    #             power = required_power * power_mod
-    #             # chuta
-    #             self.ah.kick(10, rel_point_dir)
-
     def kick_to(self, point, extra_power=0.0):
         if self.abs_coords is not None:
             max_kick_dist = 55.0 # maxíma distância percorrida pela bola na força maxima
@@ -267,19 +247,6 @@ class WorldModel:
                 # print(round(self.abs_body_dir, 2) , round(angle_to_point, 2))
                 self.ah.kick(100, angle) # chuta
 
-
-    # def chute_fraco(self, point):
-    #     point_dist = self.euclidean_distance(self.abs_coords, point)
-    #     min_dist = point_dist/5 if point_dist/5 > 1 else 1
-    #     player_x = self.abs_coords[0]
-    #     player_y = self.abs_coords[1]
-    #     x = point[0]
-    #     y = point[1]
-    #     new_x = (min_dist*(x-player_x))/(math.sqrt(x**2 + y**2))
-    #     new_y = (min_dist*(y-player_y))/(math.sqrt(x**2 + y**2))
-    #     new_point = (new_x, new_y)
-    #     print(point, new_point)
-    #     self.kick_to(new_point)
 
     def get_effective_kick_power(self, ball, power):
         # calcula forca efetiva de chute baseado na distancia e angulo que a bola esta
@@ -316,7 +283,7 @@ class WorldModel:
 
     def teleport_to_point(self, point):
         self.ah.move(point[0], point[1])
-        print("Teleport")
+        # print("Teleport")
 
 
     def align_neck_with_body(self):

@@ -19,6 +19,8 @@ class Trainer:
         self.game_state_estimator = None
         self.__msg_thread = None
         self.__think_thread = None
+        self.__should_think_on_data = False
+        self.__send_commands = False
         self.in_kick_off_formation = False
 
 
@@ -29,14 +31,16 @@ class Trainer:
         self.__sock = sock.Socket(host, port)
         self.wm = WorldModel(handler.ActionHandler(self.__sock))
         self.wm.teamname = teamname
-        self.msg_handler = handler.MessageHandler(self.wm)
+        # self.msg_handler = handler.MessageHandler(self.wm)
         init_address = self.__sock.address
+        self.__parsing = True
+        self.__msg_thread = threading.Thread(target=self.__message_loop, name="message_loop")
+        # self.__msg_thread.daemon = True 
+        self.__msg_thread.start()
         init_msg = "(init %s (version %d))"
         self.__sock.send(init_msg % (teamname, version))
         while self.__sock.address == init_address:
             time.sleep(0.0001)
-            print("waiting")
-        self.__think_thread.daemon = True
         self.__connected = True
         print('Sou o Coach e estou conectado')
     
@@ -44,11 +48,29 @@ class Trainer:
         # NAO CHAMAR EXTERNAMENTE!
         while self.__parsing:
             raw_msg = self.__sock.recv()
-            msg_type = self.msg_handler.handle_message(raw_msg)
-            if msg_type == handler.ActionHandler.CommandType.SENSE_BODY:
-                self.__send_commands = True
-            self.__should_think_on_data = True
-            
+            # msg_type = self.msg_handler.handle_message(raw_msg)
+            # if msg_type == handler.ActionHandler.CommandType.SENSE_BODY:
+            #     self.__send_commands = True
+            # self.__should_think_on_data = True
+
+    def think(self):
+        #IMPLEMENTACAO DA ESTRATEGIA VEM AQUI!
+        if not self.__think_thread.is_alive() or not self.__msg_thread.is_alive():
+            raise Exception("Uma thread morreu!")
+        print("Sou o Coach e estou pensando")
+
+    def __think_loop(self):
+        # NAO CHAMAR EXTERNAMENTE!
+        while self.__thinking:
+            if self.__send_commands:
+                self.__send_commands = False
+                self.wm.ah.send_commands()
+            if self.__should_think_on_data:
+                self.__should_think_on_data = False
+                self.think()
+            else:
+                time.sleep(0.0001)
+
     def check_ball(self,):
         pass
 
@@ -65,7 +87,6 @@ class Trainer:
     def eye(self,):
         pass
 
-
     def move(self,):
         pass 
     
@@ -74,7 +95,6 @@ class Trainer:
 
     def change_player_type(self,):
         pass 
-
 
     def say(self,):
         pass 
@@ -87,8 +107,6 @@ class Trainer:
 
     def illegal(self,):
         pass 
-
-    
 
     def change_mode(self, play_mode):
         # modes : kick_off, free_kick, kick_in, or corner_kick, 
