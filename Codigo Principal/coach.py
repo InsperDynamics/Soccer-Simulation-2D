@@ -10,8 +10,9 @@ from math import *
 from world_model import WorldModel
 
 
-class Trainer:
+class Coach:
     def __init__(self):
+        self.team_name = team_name
         self.__connected = False
         self.__sock = None
         self.wm = None
@@ -22,7 +23,9 @@ class Trainer:
         self.__should_think_on_data = False
         self.__send_commands = False
         self.in_kick_off_formation = False
-
+        self.eye = False
+        self.msg_atual = None
+        self.compression = None
 
     def connect(self, host, port, teamname, version=11):
         if self.__connected:
@@ -71,38 +74,41 @@ class Trainer:
             else:
                 time.sleep(0.0001)
 
+    def bye(self):
+        print('Byee')
+        sys.exit()
+
     def check_ball(self,):
+        x,y = self.wm.get_object_absolute_coords(obj)
+        return x,y
+
+    def look(self,obj):
+        x,y = self.wm.get_object_absolute_coords(obj)
+
+
         pass
 
-    def look(self,):
+    def team_names(self):
+        #Devolver o nome dos times
         pass
 
-    def team_names(self,):
-        pass
-
-    def ear(self,mode):
-        
-        pass
     
-    def eye(self,):
+    def eye(self,boolean):
+        self.eye = boolean
+
+    def change_player_type(self,num,player_type): 
+        #saber acessar os player pelos números
+        pass 
+
+    def say(self,clang_msg):
+        self.msg_atual = clang_msg
+
+    def compression(self,level):
+        #Olhar a sessão no regulamento para entender
+        self.compression = level
         pass
 
-    def move(self,):
-        pass 
-    
-    def recover(self,):
-        pass 
-
-    def change_player_type(self,):
-        pass 
-
-    def say(self,):
-        pass 
-
-    def compression(self,):
-        pass
-
-    def done(self,):
+    def done(self):
         pass 
 
     def illegal(self,):
@@ -111,28 +117,12 @@ class Trainer:
     def change_mode(self, play_mode):
         # modes : kick_off, free_kick, kick_in, or corner_kick, 
         self.wm.play_mode = play_mode
-        pass
 
     def move_player(self,object,x,y,vx=0,vy=0): #object pode ser player ou bola
         distance = sqrt(x**2 + y**2)
         direction = atan(y/x) - atan(object.direction)
         object.distance = distance
         object.direction = direction
-
-        pass
-
-    def move_ball(self,object,x,y,vx=0,vy=0): #object pode ser player ou bola
-        distance = sqrt(x**2 + y**2)
-
-        pass
-    
-
-    def start(self):
-        self.wm.play_mode = "kick_off_l"
-
-
-    def recover(self):
-        self.wm.stamina = 8000
 
     
         
@@ -141,7 +131,7 @@ class Trainer:
 if __name__ == "__main__":
     team_name = sys.argv[1]
 
-    coach = Trainer()
+    coach = Coach()
 
     coach.connect("localhost", 6002, team_name)
 
